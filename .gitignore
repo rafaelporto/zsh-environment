@@ -1,0 +1,17 @@
+# work-specific configs — never commit
+private/*
+!private/.gitkeep
+
+# ZSH generated files
+.zsh_history
+.zsh_sessions/
+.zcompdump*
+
+# macOS
+.DS_Store
+
+# backup files
+*.backup
+*.bak
+*--
+*.pre-oh-my-zsh
