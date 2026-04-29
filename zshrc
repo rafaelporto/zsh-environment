@@ -9,7 +9,7 @@ fi
 
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
-plugins=(git zsh-syntax-highlighting web-search)
+plugins=(git web-search)
 source "$ZSH/oh-my-zsh.sh"
 
 # zplug
