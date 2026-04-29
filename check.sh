@@ -3,22 +3,22 @@
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 ERRORS=0
 
+case "$OSTYPE" in
+  darwin*|linux-gnu*) ;;
+  *) echo "Error: unsupported OS '$OSTYPE'. Only macOS and Linux are supported."; exit 1 ;;
+esac
+
 pass() { echo "  [ok] $1"; }
 fail() { echo "  [FAIL] $1 -- $2"; ERRORS=$((ERRORS + 1)); }
 
 echo "Checking ZSH environment installation..."
 
-echo ""
-echo "-> Symlinks"
-declare -A LINKS=(
-    ["$HOME/.zshrc"]="$REPO_DIR/zshrc"
-    ["$HOME/.zprofile"]="$REPO_DIR/zprofile"
-    ["$HOME/.p10k.zsh"]="$REPO_DIR/p10k.zsh"
-)
-for dotfile in "${!LINKS[@]}"; do
-    expected="${LINKS[$dotfile]}"
+check_symlink() {
+    local dotfile="$1"
+    local expected="$2"
     if [ -L "$dotfile" ]; then
-        actual=$(readlink "$dotfile")
+        local actual
+        actual="$(realpath "$dotfile" 2>/dev/null || readlink "$dotfile")"
         if [ "$actual" = "$expected" ]; then
             pass "$dotfile -> $expected"
         else
@@ -27,7 +27,13 @@ for dotfile in "${!LINKS[@]}"; do
     else
         fail "$dotfile" "not a symlink"
     fi
-done
+}
+
+echo ""
+echo "-> Symlinks"
+check_symlink "$HOME/.zshrc"    "$REPO_DIR/zshrc"
+check_symlink "$HOME/.zprofile" "$REPO_DIR/zprofile"
+check_symlink "$HOME/.p10k.zsh" "$REPO_DIR/p10k.zsh"
 
 echo ""
 echo "-> Private directory"
@@ -47,14 +53,6 @@ if [ -f "$REPO_DIR/private/work.zsh" ]; then
     pass "private/work.zsh exists"
 else
     fail "private/work.zsh" "not found -- create it with your work-specific configs"
-fi
-
-echo ""
-echo "-> Removed files"
-if [ ! -f "$HOME/.nu-zprofile" ]; then
-    pass "~/.nu-zprofile removed"
-else
-    fail "~/.nu-zprofile" "file still exists"
 fi
 
 echo ""
