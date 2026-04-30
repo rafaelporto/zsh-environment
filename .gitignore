@@ -2,6 +2,9 @@
 private/*
 !private/.gitkeep
 
+# Claude Code local settings (may contain machine paths and permission allowlists)
+.claude/
+
 # ZSH generated files
 .zsh_history
 .zsh_sessions/
