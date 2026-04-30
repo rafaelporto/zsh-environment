@@ -10,7 +10,7 @@ zsh-environment/
 ├── zprofile       # Login profile (aliases, PATH exports, utility functions)
 ├── p10k.zsh       # Powerlevel10k theme configuration
 ├── setup.sh       # One-shot setup: dependencies + symlinks + validation
-├── bootstrap.sh   # Installs required dependencies (Homebrew, OMZ, zplug, p10k)
+├── bootstrap.sh   # Installs required dependencies
 ├── install.sh     # Sets up symlinks from ~/ to this repo
 ├── check.sh       # Validates the installation
 └── private/       # Work-specific configs — gitignored, never committed
@@ -25,7 +25,7 @@ zsh-environment/
 
 `check.sh` validates the installation: confirms that the symlinks point to the correct files, that `private/` is set up correctly, that no private files are tracked by git, and that `zshrc` and `zprofile` have no syntax errors.
 
-Work-specific configuration lives in `private/work.zsh`, which is sourced at the end of both `zshrc` and `zprofile` if the file exists. This file is gitignored and must be created manually on each machine — it is never tracked by this repository.
+Work-specific configuration lives in `private/work.zsh`, which is sourced at the end of `zshrc` if the file exists. This file is gitignored and must be created manually on each machine — it is never tracked by this repository.
 
 ## Installing on a new machine
 
@@ -55,9 +55,66 @@ Work-specific configuration lives in `private/work.zsh`, which is sourced at the
 
 | Script | Purpose |
 |--------|---------|
-| `./bootstrap.sh` | Install dependencies only (Homebrew, Oh My Zsh, zplug, Powerlevel10k) |
+| `./bootstrap.sh` | Install dependencies only |
 | `./install.sh` | Create symlinks only |
 | `./check.sh` | Validate the installation |
+
+## Dependencies
+
+### Required (installed by bootstrap)
+
+| Tool | Purpose | Aliases | Config |
+|------|---------|---------|--------|
+| `git` | Version control | `add`, `st`, `ci`, `push`, `co`, `pull`, `lg`, and others | — |
+| `curl` | HTTP requests | `myip` | — |
+| `zsh` | Shell | — | — |
+| `tmux` | Terminal multiplexer | `tx`, `txa`, `txn`, `txl`, `txk`, `tConfig`, `tConfigReload` | [tmux-environment](https://github.com/rafaelporto/tmux-environment) ¹ |
+| `nvim` | Text editor (default `$EDITOR`) | `nv`, `nv.`, `nvconfig`, and others | [neo-vim-environment](https://github.com/rafaelporto/neo-vim-environment) ¹ |
+| `jq` | JSON processor | `flattenJson`, `jwt-decode`, `catFileWithColors` | — |
+| `lazygit` | Terminal UI for git | `lg` | — |
+
+> ¹ Personal configuration repository — optional, bring your own config.
+
+### Framework (installed by bootstrap)
+
+| Tool | Purpose |
+|------|---------|
+| Homebrew | Package manager for macOS and Linux |
+| Oh My Zsh | ZSH framework |
+| zplug | ZSH plugin manager (installs `zsh-syntax-highlighting`) |
+| Powerlevel10k | ZSH prompt theme |
+
+### Optional — aliases activated when installed
+
+These tools are not required. If installed, their aliases are automatically activated in `zprofile`. If not installed, they are silently skipped.
+
+| Tool | Purpose | Aliases | Config |
+|------|---------|---------|--------|
+| `kitty` | Terminal emulator | `kittytheme`, `nvkitty`, `updateKitty` | [kitty-config](https://github.com/rafaelporto/kitty-config) ¹ |
+| `dotnet` | .NET SDK | `dn`, `dnb`, `dnr`, `dnc`, `dnrt`, `dnt` | — |
+| `clj` | Clojure CLI | `cljReplRun` | — |
+| `databricks` | Databricks CLI | `dbc` | — |
+| `npm` | Node package manager | `n`, `nr`, `ni` | — |
+| `op` | 1Password CLI | shell completion | — |
+
+> ¹ Personal configuration repository — optional, bring your own config.
+
+### Recommended — suggested by bootstrap when applicable
+
+| Tool | When suggested | Purpose |
+|------|---------------|---------|
+| NVM | When `npm` is found without NVM, or on first install | Manages multiple Node.js versions |
+| SDKMAN | When `java` is found without SDKMAN, or on first install | Manages Java and other JVM tool versions |
+
+### Pre-installed (no action needed)
+
+| Tool | Notes |
+|------|-------|
+| `vim` | Available on all Unix systems |
+| `openssl` | Pre-installed on macOS; available via Homebrew on Linux |
+| `lsof` | Pre-installed on macOS and most Linux distributions |
+| `dig` | Pre-installed on macOS; part of `dnsutils` on Linux |
+| `gcloud` | Sourced automatically if installed at standard paths |
 
 ## Adding new configs
 

@@ -1,8 +1,12 @@
 # PATH
 export PATH="/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH"
 export PATH="/usr/bin:$PATH"
-export PATH="$HOME/bin/scripts:$PATH"
-export PATH="$HOME/bin/scripts/string-utils:$PATH"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export PATH="$HOME/bin/scripts:$PATH"
+  export PATH="$HOME/bin/scripts/string-utils:$PATH"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
 export PATH="$PATH:$HOME/.dotnet/tools"
 
 # GPG
@@ -54,13 +58,19 @@ alias txk='tmux kill-session -t'
 alias txn='tmux new -s'
 
 # kitty
-alias kittytheme='kitty +kitten themes'
-alias nvkitty='nv ~/.config/kitty -c "cd ~/.config/kitty"'
-alias updateKitty='curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin'
+if command -v kitty &>/dev/null; then
+  alias kittytheme='kitty +kitten themes'
+  alias nvkitty='nv ~/.config/kitty -c "cd ~/.config/kitty"'
+  alias updateKitty='curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin'
+fi
 
 # Paths
 alias cdTmuxConfig='cd ~/.config/tmux/'
-alias cdScripts="cd $HOME/bin/scripts"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  [[ -d "$HOME/bin/scripts" ]] && alias cdScripts="cd $HOME/bin/scripts"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  [[ -d "$HOME/.local/bin" ]] && alias cdScripts="cd $HOME/.local/bin"
+fi
 
 # General aliases
 alias ls='ls -la'
@@ -134,27 +144,27 @@ alias gbnew='git branch -m'
 alias lg='lazygit'
 
 # Dotnet
-alias dn='dotnet'
-alias dnb='dotnet clean && dotnet restore && dotnet build --force'
-alias dnr='dotnet run'
-alias dnc='dotnet clean'
-alias dnrt='dotnet restore'
-alias dnt='dotnet test'
+if command -v dotnet &>/dev/null; then
+  alias dn='dotnet'
+  alias dnb='dotnet clean && dotnet restore && dotnet build --force'
+  alias dnr='dotnet run'
+  alias dnc='dotnet clean'
+  alias dnrt='dotnet restore'
+  alias dnt='dotnet test'
+fi
 
 # Clojure
-alias cljReplRun='clj -M:repl/conjure'
-
-# Kafka
-alias startKafka='confluent local kafka start'
-alias stopKafka='confluent local kafka stop'
+command -v clj &>/dev/null && alias cljReplRun='clj -M:repl/conjure'
 
 # NPM
-alias n='npm'
-alias nr='n run'
-alias ni='n install'
+if command -v npm &>/dev/null; then
+  alias n='npm'
+  alias nr='n run'
+  alias ni='n install'
+fi
 
 # Databricks
-alias dbc='databricks'
+command -v databricks &>/dev/null && alias dbc='databricks'
 
 # JSON
 alias flattenJson='jq -c .'
