@@ -9,6 +9,14 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
 fi
 export PATH="$PATH:$HOME/.dotnet/tools"
 
+# Android SDK
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export ANDROID_HOME="$HOME/Library/Android/sdk"
+  export PATH="$PATH:$ANDROID_HOME/emulator"
+  export PATH="$PATH:$ANDROID_HOME/platform-tools"
+  export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin"
+fi
+
 # GPG
 GPG_TTY=$(tty)
 export GPG_TTY
@@ -88,7 +96,7 @@ alias ~="cd ~"
 alias home="cd ~"
 alias c='clear'
 alias path='echo -e ${PATH//:/\\n}'
-alias reloadConfig='source ~/.zprofile'
+alias reloadConfig='source ~/.zprofile && source ~/.zshrc'
 alias myip='curl https://ipinfo.io/ip'
 alias ports='sudo lsof -i -P | grep LISTEN'
 alias lastJsonModified='ls -t *.json | head -n1'
