@@ -29,6 +29,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   for _jvm in \
     "/usr/lib/jvm/default-java" \
+    "/usr/lib/jvm/java-21-openjdk-arm64" \
     "/usr/lib/jvm/java-21-openjdk-amd64" \
     "/usr/lib/jvm/java-21-openjdk"; do
     [[ -d "$_jvm" ]] && { export JAVA_HOME="$_jvm"; break; }

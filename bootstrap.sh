@@ -184,7 +184,7 @@ else
     if [[ "$OS" == "macos" ]]; then
         LG_CMD='brew install lazygit'
     else
-        LG_CMD='LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po "\"tag_name\": \"v\K[^\"]*") && curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" && tar xf /tmp/lazygit.tar.gz -C /tmp lazygit && sudo install /tmp/lazygit /usr/local/bin'
+        LG_CMD='LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po "\"tag_name\": \"v\K[^\"]*") && LG_ARCH=$(uname -m | sed "s/x86_64/x86_64/;s/aarch64/arm64/;s/armv7l/armv6/") && curl -Lo /tmp/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_${LG_ARCH}.tar.gz" && tar xf /tmp/lazygit.tar.gz -C /tmp lazygit && sudo install /tmp/lazygit /usr/local/bin'
     fi
     confirm_and_run "lazygit — terminal UI for git (lg alias)" "$LG_CMD" || true
 fi
