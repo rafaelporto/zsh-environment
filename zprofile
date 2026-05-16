@@ -1,6 +1,7 @@
 # PATH
 export PATH="/usr/local/bin:/usr/local/sbin:$HOME/bin:$PATH"
 export PATH="/usr/bin:$PATH"
+[[ -d /snap/bin ]] && export PATH="/snap/bin:$PATH"
 if [[ "$OSTYPE" == "darwin"* ]]; then
   export PATH="$HOME/bin/scripts:$PATH"
   export PATH="$HOME/bin/scripts/string-utils:$PATH"
