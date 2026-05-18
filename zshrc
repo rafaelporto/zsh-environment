@@ -49,6 +49,12 @@ fi
 
 export EDITOR='nvim'
 
+# .NET
+if [[ -d "$HOME/.dotnet" ]]; then
+    export DOTNET_ROOT="$HOME/.dotnet"
+    export PATH="$PATH:$HOME/.dotnet:$HOME/.dotnet/tools"
+fi
+
 # NVM
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
