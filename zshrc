@@ -59,7 +59,6 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-export NODE_OPTIONS=--openssl-legacy-provider
 
 # 1Password shell completion (macOS)
 if [[ "$OSTYPE" == "darwin"* ]] && command -v op &>/dev/null; then
