@@ -50,9 +50,26 @@ fi
 export EDITOR='nvim'
 
 # .NET
-if [[ -d "$HOME/.dotnet" ]]; then
-    export DOTNET_ROOT="$HOME/.dotnet"
-    export PATH="$PATH:$HOME/.dotnet:$HOME/.dotnet/tools"
+# DOTNET_ROOT tem de apontar para uma raiz que realmente contenha um runtime, e a
+# checagem antiga (-d "$HOME/.dotnet") nao garantia isso: ~/.dotnet e tambem o
+# diretorio de tools de usuario, criado por `dotnet tool install --global` mesmo
+# quando nenhum SDK vive ali. Com DOTNET_ROOT apontado para uma pasta sem runtime,
+# todo apphost self-contained falha com "You must install .NET to run this
+# application" — foi assim que o roslyn-language-server morreu com exit 131.
+# Por isso procuramos por shared/Microsoft.NETCore.App, e a raiz do sistema vem
+# antes da do usuario.
+for _dotnet in /usr/local/share/dotnet /usr/share/dotnet /usr/lib/dotnet "$HOME/.dotnet"; do
+  if [[ -d "$_dotnet/shared/Microsoft.NETCore.App" ]]; then
+    export DOTNET_ROOT="$_dotnet"
+    [[ ":$PATH:" == *":$_dotnet:"* ]] || export PATH="$PATH:$_dotnet"
+    break
+  fi
+done
+unset _dotnet
+
+# Tools globais vao para ~/.dotnet/tools independente de onde o SDK esta instalado.
+if [[ -d "$HOME/.dotnet/tools" && ":$PATH:" != *":$HOME/.dotnet/tools:"* ]]; then
+  export PATH="$PATH:$HOME/.dotnet/tools"
 fi
 
 # NVM
