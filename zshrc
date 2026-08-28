@@ -49,6 +49,26 @@ fi
 
 export EDITOR='nvim'
 
+# Edicao de linha por palavra.
+#
+# Vem depois do oh-my-zsh e do p10k de proposito: ambos mexem em bindkey durante
+# o carregamento, e o ultimo a falar ganha.
+#
+# As sequencias sao o que o kitty envia para Alt+seta / Alt+Backspace, iguais em
+# macOS e Linux — por isso o bloco nao tem guarda de OSTYPE. A diferenca esta em
+# como o Alt chega: no Linux ele ja chega como Alt, e no macOS depende de
+# `macos_option_as_alt yes` no kitty.conf (sem isso o Option gera caractere
+# Unicode e nada disso e acionado).
+bindkey '^[[1;3D' backward-word       # Alt/Option+Esquerda: uma palavra atras
+bindkey '^[[1;3C' forward-word        # Alt/Option+Direita:  uma palavra a frente
+bindkey '^[^?'    backward-kill-word  # Alt/Option+Backspace: apaga palavra atras
+bindkey '^[d'     kill-word           # Alt/Option+D: apaga palavra a frente
+
+# Por padrao o zsh trata / - _ . = & como parte da palavra, o que faz um
+# "pular palavra" engolir um caminho inteiro. Vazio deixa o comportamento
+# parecido com o do nvim.
+WORDCHARS=''
+
 # .NET
 # DOTNET_ROOT tem de apontar para uma raiz que realmente contenha um runtime, e a
 # checagem antiga (-d "$HOME/.dotnet") nao garantia isso: ~/.dotnet e tambem o
