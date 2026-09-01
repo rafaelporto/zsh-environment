@@ -11,7 +11,7 @@ fi
 export PATH="$PATH:$HOME/.dotnet/tools"
 
 # Android SDK
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "$OSTYPE" == "darwin"* && -d "$HOME/Library/Android/sdk" ]]; then
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export PATH="$PATH:$ANDROID_HOME/emulator"
   export PATH="$PATH:$ANDROID_HOME/platform-tools"
@@ -24,7 +24,9 @@ export GPG_TTY
 
 # Java
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home"
+  _jvm="$(/usr/libexec/java_home -v 21 2>/dev/null || /usr/libexec/java_home 2>/dev/null)"
+  [[ -n "$_jvm" ]] && export JAVA_HOME="$_jvm"
+  unset _jvm
   export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
   export PATH="/opt/local/bin:/opt/local/sbin:$PATH"  # MacPorts
 elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
