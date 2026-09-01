@@ -6,8 +6,8 @@ Personal ZSH configuration files for macOS and Linux.
 
 ```
 zsh-environment/
-├── zshrc          # Main ZSH config (Oh My Zsh, plugins, theme, tools)
-├── zprofile       # Login profile (aliases, PATH exports, utility functions)
+├── zshrc          # Interactive shell config (Oh My Zsh, plugins, theme, tools, aliases, functions)
+├── zprofile       # Login profile (PATH and environment exports only)
 ├── p10k.zsh       # Powerlevel10k theme configuration
 ├── setup.sh       # One-shot setup: dependencies + symlinks + validation
 ├── bootstrap.sh   # Installs required dependencies
@@ -86,14 +86,12 @@ Work-specific configuration lives in `private/work.zsh`, which is sourced at the
 
 ### Optional — aliases activated when installed
 
-These tools are not required. If installed, their aliases are automatically activated in `zprofile`. If not installed, they are silently skipped.
+These tools are not required. If installed, their aliases are automatically activated in `zshrc`. If not installed, they are silently skipped.
 
 | Tool | Purpose | Aliases | Config |
 |------|---------|---------|--------|
 | `kitty` | Terminal emulator | `kittytheme`, `nvkitty`, `updateKitty` | [kitty-config](https://github.com/rafaelporto/kitty-config) ¹ |
 | `dotnet` | .NET SDK | `dn`, `dnb`, `dnr`, `dnc`, `dnrt`, `dnt` | — |
-| `clj` | Clojure CLI | `cljReplRun` | — |
-| `databricks` | Databricks CLI | `dbc` | — |
 | `npm` | Node package manager | `n`, `nr`, `ni` | — |
 | `op` | 1Password CLI | shell completion | — |
 
@@ -120,5 +118,10 @@ These tools are not required. If installed, their aliases are automatically acti
 
 | Type | Where |
 |------|-------|
-| Generic aliases, functions, exports | `zprofile` or `zshrc` |
+| Aliases and shell functions | `zshrc` |
+| Environment exports (`PATH`, `*_HOME`, ...) | `zprofile` |
 | Work-specific configs (internal URLs, company tools, credentials) | `private/work.zsh` only |
+
+> Aliases and functions **must** live in `zshrc`. They are not part of the environment, so they are not
+> inherited by child processes — defining them in `zprofile` makes them reach login shells only, and they
+> silently vanish in every non-login terminal (LXDE's lxterminal, tmux panes, most Linux emulators).
