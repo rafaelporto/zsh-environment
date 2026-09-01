@@ -117,14 +117,15 @@ export SDKMAN_DIR="$HOME/.sdkman"
 alias nv='nvim'
 alias nv.='nvim .'
 alias v='vim'
-alias zprofile='nvim ~/.zprofile'
+alias zprofile='nvim ~/.config/zsh-environment/zprofile -c "cd ~/.config/zsh-environment"'
+alias zshrc='nvim ~/.config/zsh-environment/zshrc -c "cd ~/.config/zsh-environment"'
 alias vConfig='nvim ~/.vimrc'
 alias nvconfig='nvim ~/.config/nvim/ -c "cd ~/.config/nvim/"'
 alias cdNvimConfig='cd ~/.config/nvim/'
 
 # tmux
 alias tx='tmux'
-alias tConfig='nvim ~/.tmux.conf'
+alias tConfig='nvim ~/.config/tmux/.tmux.conf -c "cd ~/.config/tmux"'
 alias tConfigReload='tmux source-file ~/.tmux.conf'
 alias txa='tmux attach -t'
 alias txl='tmux ls'
