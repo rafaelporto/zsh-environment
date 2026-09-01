@@ -163,18 +163,12 @@ if command -v dotnet &>/dev/null; then
   alias dnt='dotnet test'
 fi
 
-# Clojure
-command -v clj &>/dev/null && alias cljReplRun='clj -M:repl/conjure'
-
 # NPM
 if command -v npm &>/dev/null; then
   alias n='npm'
   alias nr='n run'
   alias ni='n install'
 fi
-
-# Databricks
-command -v databricks &>/dev/null && alias dbc='databricks'
 
 # JSON
 alias flattenJson='jq -c .'
@@ -186,8 +180,4 @@ jwt-decode() {
 
 catFileWithColors() {
   cat $1 | jq
-}
-
-print-certificate-pfx() {
-  openssl pkcs12 -in $1 -info -noout
 }
