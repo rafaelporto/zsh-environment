@@ -9,12 +9,15 @@ zsh-environment/
 ├── zshrc          # Interactive shell config (Oh My Zsh, plugins, theme, tools, aliases, functions)
 ├── zprofile       # Login profile (PATH and environment exports only)
 ├── p10k.zsh       # Powerlevel10k theme configuration
+├── p10k-tty.zsh   # p10k overrides for the Linux console — opt-in, not symlinked (see below)
+├── tty-theme.zsh  # Linux console color palette + `ttytheme` command — not symlinked (see below)
 ├── setup.sh       # One-shot setup: dependencies + symlinks + validation
 ├── bootstrap.sh   # Installs required dependencies
 ├── install.sh     # Sets up symlinks from ~/ to this repo
 ├── check.sh       # Validates the installation
-└── private/       # Work-specific configs — gitignored, never committed
-    └── work.zsh   # Created manually on each machine (see below)
+└── private/       # Per-machine files — gitignored, never committed
+    ├── work.zsh   # Work-specific configs, created manually on each machine (see below)
+    └── machine.zsh # Optional machine settings, e.g. the TTY prompt and theme (see below)
 ```
 
 ## How it works
@@ -26,6 +29,46 @@ zsh-environment/
 `check.sh` validates the installation: confirms that the symlinks point to the correct files, that `private/` is set up correctly, that no private files are tracked by git, and that `zshrc` and `zprofile` have no syntax errors.
 
 Work-specific configuration lives in `private/work.zsh`, which is sourced at the end of `zshrc` if the file exists. This file is gitignored and must be created manually on each machine — it is never tracked by this repository.
+
+Machine settings live in `private/machine.zsh`, also gitignored and optional. Unlike `work.zsh`, it holds no secrets — only switches that describe the hardware or terminal of that machine. It is sourced **before** the Powerlevel10k block, so its switches can change how the prompt is loaded.
+
+## Linux console (TTY) prompt
+
+The Linux console (the text VT on a headless machine's monitor, `TERM=linux`) only loads bitmap fonts of up to 512 glyphs, so Nerd Font icons and symbols such as `❯` and `✔` cannot be drawn there. `p10k-tty.zsh` overrides the prompt with ASCII equivalents (`POWERLEVEL9K_MODE=ascii`, `>` / `<` as the prompt char, `ok` for success).
+
+It is loaded by `zshrc` only when **all three** conditions hold:
+
+1. The OS is Linux (`$OSTYPE == linux-gnu*`) — macOS never loads it.
+2. The machine opted in with `ZSH_ENV_TTY_PROMPT=1` in `private/machine.zsh`.
+3. The terminal is the console: `TERM=linux`, or — inside tmux, where `TERM` belongs to tmux — the attached client's `#{client_termname}` is `linux`.
+
+To enable it on a machine:
+
+```bash
+echo 'ZSH_ENV_TTY_PROMPT=1' >> ~/.config/zsh-environment/private/machine.zsh
+```
+
+The console has only 8 colors. Outside tmux, zsh knows it (`TERM=linux`) and skips the 256-color greys of `p10k.zsh`, so they render as the default white. Inside tmux, `TERM` claims 256 colors and tmux rounds those greys down to black — invisible on the black background. So, in a tmux pane opened from the console, `zshrc` also sets `TERM=tmux` (8 colors); programs started from that pane (nvim, lazygit) see 8 colors as well.
+
+The choice is made when the shell starts: a tmux pane opened over SSH keeps the Nerd Font prompt when later viewed on the console, and vice versa. Open a new pane (or `exec zsh`) to switch. The git ahead/behind arrows (`⇣⇡⇠⇢`) are hardcoded in `p10k.zsh`'s formatter and still show as `?` on the console.
+
+For accented characters and box drawing to render, the console font must be a Unicode one — on Debian, set `CODESET="Uni3"`, `FONTFACE="Terminus"` and `FONTSIZE` in `/etc/default/console-setup`, then run `sudo setupcon`.
+
+### Console color theme (`ttytheme`)
+
+The console's 16 colors can be re-tinted without root, through `\e]P<index><RRGGBB>` escape sequences (`\e]R` restores the kernel default). `tty-theme.zsh` ships a light palette (One Light) and the `ttytheme` command, defined on Linux only:
+
+```bash
+ttytheme light   # apply the light palette now and save it as this machine's default
+ttytheme dark    # restore the kernel palette now and drop the saved default
+ttytheme         # show the saved theme
+```
+
+Saving means one line in `private/machine.zsh` (`ZSH_ENV_TTY_THEME=light`); the command rewrites only that line. Nothing changes on a machine until someone runs `ttytheme` there — a fresh clone gets the command, never the theme.
+
+- **Inside tmux** it works too: tmux does not forward `\e]P`, so `ttytheme` writes straight to the attached client's tty (`#{client_tty}`), as long as that client is the console. Anywhere else (e.g. plain SSH) it refuses with a warning.
+- **On login**, `zshrc` re-applies the saved theme when the shell runs directly on the console (`TERM=linux`, outside tmux). The palette lasts until logout or reboot, and a tmux started from that shell inherits it.
+- It is independent of `ZSH_ENV_TTY_PROMPT`: either can be enabled without the other.
 
 ## Installing on a new machine
 
@@ -121,6 +164,7 @@ These tools are not required. If installed, their aliases are automatically acti
 | Aliases and shell functions | `zshrc` |
 | Environment exports (`PATH`, `*_HOME`, ...) | `zprofile` |
 | Work-specific configs (internal URLs, company tools, credentials) | `private/work.zsh` only |
+| Machine switches (hardware/terminal of one machine, no secrets) | `private/machine.zsh` (`ttytheme` edits it for you) |
 
 > Aliases and functions **must** live in `zshrc`. They are not part of the environment, so they are not
 > inherited by child processes — defining them in `zprofile` makes them reach login shells only, and they

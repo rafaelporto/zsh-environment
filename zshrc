@@ -32,6 +32,9 @@ if [[ -f "$ZPLUG_HOME/init.zsh" ]]; then
   zplug load
 fi
 
+# Ajustes desta maquina (nao versionado). Antes do p10k: define opcoes lidas abaixo.
+[[ -f ~/.config/zsh-environment/private/machine.zsh ]] && source ~/.config/zsh-environment/private/machine.zsh
+
 # Powerlevel10k
 if [[ "$OSTYPE" == "darwin"* ]]; then
   [[ -f /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme ]] && \
@@ -46,6 +49,27 @@ elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
   unset _p10k
 fi
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+# Console do Linux (VT): fonte bitmap sem Nerd Font. Opt-in por maquina em private/machine.zsh.
+# Dentro do tmux o TERM e o do tmux, entao pergunta o terminal do cliente conectado.
+if [[ "$OSTYPE" == "linux-gnu"* && "$ZSH_ENV_TTY_PROMPT" == 1 ]]; then
+  _term_cliente=$TERM
+  [[ -n $TMUX ]] && _term_cliente=$(tmux display -p '#{client_termname}' 2>/dev/null)
+  if [[ $_term_cliente == linux ]]; then
+    # O tmux anuncia 256 cores, mas o console so tem 8: cinzas escuros viram preto no fundo preto.
+    # Com TERM=tmux (8 cores) o zsh omite as cores que o terminal nao tem, como fora do tmux.
+    [[ -n $TMUX ]] && export TERM=tmux
+    source ~/.config/zsh-environment/p10k-tty.zsh
+  fi
+  unset _term_cliente
+fi
+
+# Paleta do console do Linux (VT) e comando ttytheme. O tema gravado em private/machine.zsh
+# so e reaplicado fora do tmux: o tmux nao repassa \e]P, mas herda a paleta do shell que o abriu.
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  source ~/.config/zsh-environment/tty-theme.zsh
+  [[ -n "$ZSH_ENV_TTY_THEME" && "$TERM" == linux && -z "$TMUX" && -w "$TTY" ]] && _ttytheme_apply "$ZSH_ENV_TTY_THEME" "$TTY"
+fi
 
 export EDITOR='nvim'
 
