@@ -274,3 +274,6 @@ catFileWithColors() {
 
 # work-specific config (not tracked by git)
 [[ -f ~/.config/zsh-environment/private/work.zsh ]] && source ~/.config/zsh-environment/private/work.zsh
+
+# personal config (not tracked by git)
+[[ -f ~/.config/zsh-environment/private/personal.zsh ]] && source ~/.config/zsh-environment/private/personal.zsh
